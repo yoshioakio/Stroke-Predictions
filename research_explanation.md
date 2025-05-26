@@ -1,7 +1,5 @@
 # Laporan Proyek Machine Learning Prediksi Stroke Berdasarkan Kebiasaan Sehari-hari - Fajri Haryanto
 
-=============
-
 ## Domain Proyek
 
 Stroke merupakan salah satu penyakit yang memiliki tingkat kematian dan kecacatan tertinggi secara global. Organisasi Kesehatan Dunia (WHO) mencatat bahwa sekitar 15 juta orang di dunia mengalami stroke setiap tahunnya, dan sepertiganya mengalami kematian [1]. Di Indonesia, prevalensi stroke juga cukup tinggi, khususnya pada kelompok usia produktif. Hal ini menimbulkan dampak sosial dan ekonomi yang besar, baik bagi individu, keluarga, maupun negara [2].
@@ -23,8 +21,6 @@ Tujuan dari proyek ini adalah:
 2. Mengimplementasikan algoritma Random Forest untuk menghasilkan klasifikasi yang akurat antara individu berisiko dan tidak berisiko stroke.
 
 3. Memberikan solusi yang dapat membantu masyarakat dan tenaga medis dalam melakukan deteksi dini secara digital dan preventif.
-
-===============
 
 ## Business Understanding
 
@@ -72,8 +68,6 @@ Pemahaman bisnis merupakan langkah krusial dalam pengembangan sistem prediksi be
 3. Evaluasi performa menggunakan metrik yang terukur:
    Untuk menjamin kualitas model, digunakan metrik evaluasi yang mencakup accuracy, precision, recall, dan F1-score. Dengan ini, pemilihan model terbaik tidak hanya didasarkan pada akurasi saja, tetapi juga pada kemampuan mendeteksi kelas minoritas (stroke).
 
-======
-
 ## Data Understanding
 
 Dataset yang digunakan dalam penelitian ini berasal dari Kaggle - Stroke Prediction Dataset, yang telah mengalami modifikasi untuk menambahkan beberapa fitur relevan guna meningkatkan kualitas prediksi. Dataset ini mencakup data demografis, kebiasaan sehari-hari, dan riwayat kesehatan individu. Data tersebut terdiri dari 13 fitur input dan 1 fitur target, yaitu stroke, yang bersifat biner (0 = tidak terkena stroke, 1 = terkena stroke).
@@ -114,14 +108,12 @@ Berikut adalah penjelasan setiap variabel dalam dataset:
 
 Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif menggunakan teknik visualisasi seperti histogram, heatmap korelasi, dan countplot.
 
-![Histogram Fitur Numerical](images/1.png)
-![Visualisasi Persebaran Fitur Numerical](images/2.png)
-![Visualisasi Persebaran Gender](images/3.png)
+![Histogram Fitur Numerical](image/1.png)
+![Visualisasi Persebaran Fitur Numerical](image/2.png)
+![Visualisasi Persebaran Gender](image/3.png)
 ![Visualisasi Persebaran Histori Keturunan Struk](image/4.png)
 ![Visualisasi Perbandingan Penderita dan NonPenderita](image/5.png)
 ![Korelasi Matriks Fitur Numerical](image/6.png)
-
-=========
 
 ## Data Preparation
 
@@ -148,13 +140,11 @@ Training set: 80%
 Test set: 20%
 Pembagian ini bertujuan untuk melatih model pada sebagian besar data dan menguji performanya pada data yang belum pernah dilihat.
 
-===========
-
 ## Modeling
 
 Dalam proyek ini digunakan tiga algoritma klasifikasi, yaitu K-Nearest Neighbors (KNN), Random Forest, dan Gradient Boosting. Ketiga algoritma ini dipilih karena masing-masing memiliki karakteristik yang sesuai dengan kompleksitas dan tipe data pada kasus prediksi stroke, yang melibatkan fitur-fitur numerik, kategorik, serta distribusi target yang tidak seimbang.
 
-![Fitur yang dipakai analisis prediksi](images/7.png)
+![Fitur yang dipakai analisis prediksi](image/7.png)
 
 1. K-Nearest Neighbors (KNN)
    Parameter: n_neighbors=30, p=1, weights='distance'
@@ -170,8 +160,6 @@ Alasan Pemilihan: Random Forest unggul dalam menangani fitur yang saling berinte
    Parameter: n_estimators=300, learning_rate=0.05, max_depth=5, subsample=0.8
 
 Alasan Pemilihan: Algoritma ini memperbaiki kesalahan model secara iteratif, sangat cocok untuk meningkatkan performa klasifikasi dalam dataset yang kompleks. Kombinasi learning_rate dan subsample membantu menghindari overfitting.
-
-=======
 
 ## Evaluation
 
@@ -199,8 +187,6 @@ Dalam proyek ini, telah dikembangkan sistem klasifikasi risiko stroke berbasis m
 Hasil evaluasi menunjukkan bahwa Random Forest merupakan model terbaik berdasarkan metrik akurasi, recall, dan F1-score yang unggul, serta kestabilan performa antara data pelatihan dan pengujian. Dengan recall mencapai 90.86%, model ini sangat cocok untuk konteks medis yang membutuhkan sensitivitas tinggi terhadap risiko penyakit serius seperti stroke. Selain itu, Random Forest mampu menangani ketidakseimbangan kelas dalam data secara efektif melalui parameter class_weight='balanced'.
 
 Dengan performa yang seimbang, interpretabilitas yang baik, dan ketahanan terhadap overfitting, model ini dapat diadopsi sebagai pendukung pengambilan keputusan dalam diagnosis dini stroke, membantu meningkatkan efisiensi penanganan dan pencegahan penyakit secara lebih tepat sasaran.
-
-=========
 
 ## Referensi
 
