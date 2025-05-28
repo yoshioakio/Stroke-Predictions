@@ -63,10 +63,10 @@ Pemahaman bisnis merupakan langkah krusial dalam pengembangan sistem prediksi be
    - **Split Data 80:20:** Memisahkan data latih dan uji untuk evaluasi objektif.
 
 3. Evaluasi performa model menggunakan metrik:
-   - Accuracy
-   - Precision
-   - Recall
-   - F1-score  
+   - **Accuracy**
+   - **Precision**
+   - **Recall**
+   - **F1-score**  
      Sehingga pemilihan model terbaik bukan hanya berdasarkan akurasi, tetapi juga kemampuan mendeteksi kelas minoritas (stroke).
 
 ## 📊 Data Understanding - Stroke Prediction
@@ -160,11 +160,11 @@ Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif
 ![Visualisasi Perbandingan Penderita dan Non-Penderita](image/5.png)  
 ![Korelasi Matriks Fitur Numerical](image/6.png)
 
-# Data Preparation
+# 🔎 Data Preparation
 
 Tahap **data preparation** sangat krusial agar model prediksi stroke dapat bekerja secara optimal. Berikut tahapan preprocessing yang telah dilakukan:
 
-## 1. Feature Dropping
+## 1. 🗳️ Feature Dropping
 
 Beberapa fitur dihapus karena dianggap tidak relevan atau redundan terhadap tujuan utama penelitian. Fitur yang dihapus adalah:
 
@@ -191,7 +191,7 @@ stroke_df.drop([
 'Stroke History'
 ], axis=1, inplace=True)
 
-2. 🚨 Outlier Handling
+## 2. 🚨 Outlier Handling
 
 Untuk mengurangi pengaruh data ekstrem yang dapat memengaruhi distribusi, digunakan metode **IQR (Interquartile Range)** pada fitur numerik berikut:
 
@@ -213,7 +213,7 @@ Upper Bound = Q3 + 1.5 × IQR
 
 Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** agar tetap dalam batas wajar.
 
-3. 🔠 Encoding Fitur Kategorikal
+## 3. 🔠 Encoding Fitur Kategorikal
 
 Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan `LabelEncoder`:
 
@@ -233,7 +233,7 @@ stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
 
 Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan kolom aslinya tidak dihapus agar tetap bisa digunakan untuk analisis eksploratif.
 
-4. 🧪 Normalization
+## 4. 🧪 Normalization
 
 Fitur numerik dinormalisasi menggunakan `StandardScaler` agar memiliki mean = 0 dan standar deviasi = 1:
 
@@ -245,8 +245,9 @@ stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
 
 Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
 
-5. 🔄 Data Splitting
-   Dataset disusun ulang menjadi dua bagian:
+## 5. 🔄 Data Splitting
+
+Dataset disusun ulang menjadi dua bagian:
 
 all_features = gabungan fitur numerik + semua kolom encode
 
@@ -266,32 +267,29 @@ Pembagian 80:20 bertujuan untuk memastikan generalisasi model yang baik, dan str
 Untuk meningkatkan pemahaman risiko, dibuat label klasifikasi baru bernama Diagnosis Stroke, berdasarkan skor dari fitur risiko:
 
 Penyesuaian Label Smoking Status
-python
-Salin
-Edit
 
 # Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
 
-def encode_smoking(smoking_val):
-return 0 if smoking_val < 0.5 else 1
+      def encode_smoking(smoking_val):
+      return 0 if smoking_val < 0.5 else 1
 
-stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
-Hitung Threshold Berdasarkan Pasien Stroke
-diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
+      stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
+      Hitung Threshold Berdasarkan Pasien Stroke
+      diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
 
-thresholds = {
-'Age': diagnosis_positive['Age'].mean(),
-'Heart Disease': diagnosis_positive['Heart Disease'].mean(),
-'Average Glucose Level': diagnosis_positive['Average Glucose Level'].mean(),
-'Family History of Stroke encode': diagnosis_positive['Family History of Stroke encode'].mean(),
-'Stress Levels': diagnosis_positive['Stress Levels'].mean(),
-'Smoking Status encode': diagnosis_positive['Smoking Status encode'].mean(),
-}
-Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
+      thresholds = {
+      'Age': diagnosis_positive['Age'].mean(),
+      'Heart Disease': diagnosis_positive['Heart Disease'].mean(),
+      'Average Glucose Level': diagnosis_positive['Average Glucose Level'].mean(),
+      'Family History of Stroke encode': diagnosis_positive['Family History of Stroke encode'].mean(),
+      'Stress Levels': diagnosis_positive['Stress Levels'].mean(),
+      'Smoking Status encode': diagnosis_positive['Smoking Status encode'].mean(),
+      }
+      Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
 
-Fungsi Klasifikasi Risiko
-def classify_stroke(row):
-score = 0
+      Fungsi Klasifikasi Risiko
+      def classify_stroke(row):
+      score = 0
 
     if row['Age'] >= thresholds['Age']: score += 1
     if row['Heart Disease'] >= thresholds['Heart Disease']: score += 1
@@ -316,23 +314,25 @@ Nilai klasifikasi:
 
 3: Stroke parah
 
-## Modeling
+## Modeling 🎯
 
 Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbors (KNN), Random Forest, dan Gradient Boosting. Ketiganya dipilih karena masing-masing memiliki mekanisme dan keunggulan yang cocok dengan karakteristik dataset prediksi risiko stroke, yang melibatkan data numerik, kategorik, serta distribusi target yang tidak seimbang.
 
 ![Fitur yang dipakai analisis prediksi](image/7.png)
 
-1. K-Nearest Neighbors (KNN)
-   knn = KNeighborsClassifier(
-   n_neighbors=30,
-   weights='distance',
-   metric='minkowski',
-   p=1
-   )
-   knn.fit(X_train, y_train)
-   Cara Kerja:
+### 1. K-Nearest Neighbors (KNN) 👥
 
-KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur. Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat. Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi). Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
+      knn = KNeighborsClassifier(
+      n_neighbors=30,
+      weights='distance',
+      metric='minkowski',
+      p=1
+      )
+      knn.fit(X_train, y_train)
+
+Cara Kerja:
+
+KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur. **Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat**. Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi). Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
 
 Alasan Pemilihan:
 
@@ -342,19 +342,21 @@ Alasan Pemilihan:
 
 - Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
 
-2. Random Forest
-   from sklearn.ensemble import RandomForestClassifier
+### 2. Random Forest 🌲
 
-rf = RandomForestClassifier(
-n_estimators=100,
-max_depth=10,
-class_weight='balanced',
-random_state=42
-)
-rf.fit(X_train, y_train)
+      from sklearn.ensemble import RandomForestClassifier
+
+      rf = RandomForestClassifier(
+      n_estimators=100,
+      max_depth=10,
+      class_weight='balanced',
+      random_state=42
+      )
+      rf.fit(X_train, y_train)
+
 Cara Kerja:
 
-Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih. Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas. Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon. Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
+Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih. **Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas.** Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon. Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
 
 Alasan Pemilihan:
 
@@ -362,8 +364,9 @@ Alasan Pemilihan:
 - Parameter max_depth=10 mengontrol kedalaman pohon agar tidak terlalu kompleks sehingga menghindari overfitting.
 - class_weight='balanced' digunakan untuk mengatasi ketidakseimbangan kelas target dengan memberi bobot lebih pada kelas minoritas (pasien stroke).
 
-3. Gradient Boosting
-   from sklearn.ensemble import GradientBoostingClassifier
+### 3. Gradient Boosting 🚀
+
+      from sklearn.ensemble import GradientBoostingClassifier
 
 boost = GradientBoostingClassifier(
 n_estimators=300,
@@ -373,9 +376,10 @@ subsample=0.8,
 random_state=42
 )
 boost.fit(X_train, y_train)
+
 Cara Kerja:
 
-Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners). Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif. Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran. subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi. max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
+Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners). **Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif.** Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran. subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi. max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
 
 Alasan Pemilihan:
 
@@ -403,12 +407,12 @@ Hasil menunjukkan bahwa Boosting Algorithm memberikan akurasi terbaik secara kes
 | Boosting           | 99.41%        | 89.20%       |
 
 Model KNN menunjukkan gejala overfitting karena akurasi pelatihan 100% namun akurasi pengujian hanya 87.5%. Model Boosting dan Random Forest menunjukkan keseimbangan yang lebih baik antara akurasi pelatihan dan pengujian, menandakan generalisasi yang lebih baik terhadap data baru.
-**Rubrik/Kriteria Tambahan (Opsional)**:
 
-**Model Terbaik & Conclusion**
+## Model Terbaik & Conclusion
+
 Dalam proyek ini, telah dikembangkan sistem klasifikasi risiko stroke berbasis machine learning menggunakan dataset yang mencerminkan faktor-faktor penting seperti usia, riwayat kesehatan, gaya hidup, dan kebiasaan pasien. Melalui tahapan modeling dan evaluasi, tiga algoritma diuji: K-Nearest Neighbor, Random Forest, dan Gradient Boosting.
 
-Hasil evaluasi menunjukkan bahwa Random Forest merupakan model terbaik berdasarkan metrik akurasi, recall, dan F1-score yang unggul, serta kestabilan performa antara data pelatihan dan pengujian. Dengan recall mencapai 90.86%, model ini sangat cocok untuk konteks medis yang membutuhkan sensitivitas tinggi terhadap risiko penyakit serius seperti stroke. Selain itu, Random Forest mampu menangani ketidakseimbangan kelas dalam data secara efektif melalui parameter class_weight='balanced'.
+Hasil evaluasi menunjukkan **bahwa Random Forest merupakan model terbaik berdasarkan metrik akurasi, recall, dan F1-score yang unggul, serta kestabilan performa antara data pelatihan dan pengujian.** Dengan recall mencapai 90.86%, model ini sangat cocok untuk konteks medis yang membutuhkan sensitivitas tinggi terhadap risiko penyakit serius seperti stroke. Selain itu, Random Forest mampu menangani ketidakseimbangan kelas dalam data secara efektif melalui parameter class_weight='balanced'.
 
 Dengan performa yang seimbang, interpretabilitas yang baik, dan ketahanan terhadap overfitting, model ini dapat diadopsi sebagai pendukung pengambilan keputusan dalam diagnosis dini stroke, membantu meningkatkan efisiensi penanganan dan pencegahan penyakit secara lebih tepat sasaran.
 
