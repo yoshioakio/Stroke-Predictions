@@ -1,5 +1,7 @@
 # Laporan Proyek Machine Learning Prediksi Stroke Berdasarkan Kebiasaan Sehari-hari - Fajri Haryanto
 
+---
+
 ## 🌍 Domain Proyek
 
 Stroke merupakan salah satu penyakit yang memiliki tingkat kematian dan kecacatan tertinggi secara global. Organisasi Kesehatan Dunia (WHO) mencatat bahwa sekitar 15 juta orang di dunia mengalami stroke setiap tahunnya, dan sepertiganya mengalami kematian [1]. Di Indonesia, prevalensi stroke juga cukup tinggi, khususnya pada kelompok usia produktif. Hal ini menimbulkan dampak sosial dan ekonomi yang besar, baik bagi individu, keluarga, maupun negara [2].
@@ -23,6 +25,8 @@ Tujuan dari proyek ini adalah:
 2. Mengimplementasikan algoritma Random Forest untuk menghasilkan klasifikasi yang akurat antara individu berisiko dan tidak berisiko stroke.
 
 3. Memberikan solusi yang dapat membantu masyarakat dan tenaga medis dalam melakukan deteksi dini secara digital dan preventif.
+
+---
 
 ## 📊 Business Understanding
 
@@ -49,10 +53,11 @@ Pemahaman bisnis merupakan langkah krusial dalam pengembangan sistem prediksi be
 
 1. Menggunakan dan mengevaluasi tiga algoritma klasifikasi:
 
-   - Random Forest
-   - K-Nearest Neighbors (KNN)
-   - Booster Algorithm (Gradient Boosting)  
-     Ketiga algoritma dipilih karena pendekatan berbeda dalam klasifikasi, memungkinkan perbandingan performa menggunakan metrik akurasi, precision, recall, dan F1-score.
+   - **Random Forest**
+   - **K-Nearest Neighbors (KNN)**
+   - **Booster Algorithm (Gradient Boosting)**
+
+Ketiga algoritma dipilih karena pendekatan berbeda dalam klasifikasi, memungkinkan perbandingan performa menggunakan metrik akurasi, precision, recall, dan F1-score.
 
 2. Melakukan preprocessing menyeluruh meliputi:
 
@@ -69,13 +74,13 @@ Pemahaman bisnis merupakan langkah krusial dalam pengembangan sistem prediksi be
    - **F1-score**  
      Sehingga pemilihan model terbaik bukan hanya berdasarkan akurasi, tetapi juga kemampuan mendeteksi kelas minoritas (stroke).
 
-## 📊 Data Understanding - Stroke Prediction
+---
+
+## 📊 Data Understanding
 
 Dataset yang digunakan dalam penelitian ini diambil dari Kaggle: [Stroke Prediction Dataset](https://www.kaggle.com/datasets/teamincribo/stroke-prediction). Dataset ini telah dimodifikasi dengan menambahkan beberapa fitur penting yang relevan untuk meningkatkan akurasi prediksi risiko stroke.
 
 Dataset ini berisi **15.000 baris** dan **22 fitur awal**, mencakup data demografis, gaya hidup, serta riwayat kesehatan pasien.
-
----
 
 ## 🧱 Struktur Awal Dataset
 
@@ -104,8 +109,6 @@ Dataset ini berisi **15.000 baris** dan **22 fitur awal**, mencakup data demogra
 | 21  | Symptoms                 | object    | Gejala yang dialami (mengandung banyak missing)  |
 | 22  | Diagnosis                | object    | Diagnosis medis (tidak digunakan sebagai target) |
 
----
-
 ## ❌ Fitur yang Dihapus & Alasannya
 
 | Fitur                   | Alasan Penghapusan                                                                |
@@ -118,8 +121,6 @@ Dataset ini berisi **15.000 baris** dan **22 fitur awal**, mencakup data demogra
 | `Cholesterol Levels`    | Data kategori yang tidak konsisten dan kurang informatif tanpa nilai numerik      |
 | `Blood Pressure Levels` | Sama seperti kolesterol, datanya bersifat umum dan tidak terukur dengan baik      |
 | `Symptoms`              | Mengandung sekitar 2.500 missing values (17%), tidak dapat diimputasi dengan baik |
-
----
 
 ## ✅ Fitur yang Digunakan dalam Model
 
@@ -142,14 +143,10 @@ Dataset akhir menggunakan **13 fitur input** dan **1 target output** (`stroke`).
 | `stress_levels`            | Ordinal          | Tingkat stres: `Low`, `Moderate`, `High`                                  |
 | `stroke`                   | Biner (0/1)      | Target: Apakah pasien terkena stroke (`1 = ya`, `0 = tidak`)              |
 
----
-
 Dataset ini difokuskan untuk memahami **hubungan antara kebiasaan hidup dan potensi risiko stroke**, tanpa menyertakan data medis lanjutan yang dapat menimbulkan bias atau kebocoran data (leakage).  
 Pendekatan ini memungkinkan model untuk bekerja secara lebih adil, transparan, dan aplikatif di konteks pencegahan dini.
 
----
-
-### 🔍 Exploratory Data Analysis (EDA)
+## 🔍 Exploratory Data Analysis (EDA)
 
 Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif menggunakan teknik visualisasi seperti histogram, heatmap korelasi, dan countplot.
 
@@ -159,6 +156,8 @@ Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif
 ![Visualisasi Persebaran Histori Keturunan Stroke](image/4.png)  
 ![Visualisasi Perbandingan Penderita dan Non-Penderita](image/5.png)  
 ![Korelasi Matriks Fitur Numerical](image/6.png)
+
+---
 
 # 🔎 Data Preparation
 
@@ -179,37 +178,36 @@ Beberapa fitur dihapus karena dianggap tidak relevan atau redundan terhadap tuju
 
 Alasan: Kolom-kolom tersebut tidak memberikan kontribusi signifikan terhadap prediksi, sehingga dihapus untuk menyederhanakan model dan mengurangi noise.
 
-python
-stroke_df.drop([
-'Patient ID',
-'Patient Name',
-'Hypertension',
-'Symptoms',
-'Marital Status',
-'Cholesterol Levels',
-'Blood Pressure Levels',
-'Stroke History'
-], axis=1, inplace=True)
+         stroke_df.drop([
+         'Patient ID',
+         'Patient Name',
+         'Hypertension',
+         'Symptoms',
+         'Marital Status',
+         'Cholesterol Levels',
+         'Blood Pressure Levels',
+         'Stroke History'
+         ], axis=1, inplace=True)
 
 ## 2. 🚨 Outlier Handling
 
 Untuk mengurangi pengaruh data ekstrem yang dapat memengaruhi distribusi, digunakan metode **IQR (Interquartile Range)** pada fitur numerik berikut:
 
-num_features = [
-'Age',
-'Heart Disease',
-'Average Glucose Level',
-'Body Mass Index (BMI)',
-'Stress Levels'
-]
+      num_features = [
+      'Age',
+      'Heart Disease',
+      'Average Glucose Level',
+      'Body Mass Index (BMI)',
+      'Stress Levels'
+      ]
 
 Rumus IQR:
 
-IQR = Q3 - Q1
+      IQR = Q3 - Q1
 
-Lower Bound = Q1 - 1.5 × IQR
+      Lower Bound = Q1 - 1.5 × IQR
 
-Upper Bound = Q3 + 1.5 × IQR
+      Upper Bound = Q3 + 1.5 × IQR
 
 Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** agar tetap dalam batas wajar.
 
@@ -217,19 +215,18 @@ Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** 
 
 Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan `LabelEncoder`:
 
-python
-from sklearn.preprocessing import LabelEncoder
+      from sklearn.preprocessing import LabelEncoder
 
-le = LabelEncoder()
-stroke_df['Gender encode'] = le.fit_transform(stroke_df['Gender'])
-stroke_df['Work Type encode'] = le.fit_transform(stroke_df['Work Type'])
-stroke_df['Residence Type encode'] = le.fit_transform(stroke_df['Residence Type'])
-stroke_df['Smoking Status encode'] = le.fit_transform(stroke_df['Smoking Status'])
-stroke_df['Alcohol Intake encode'] = le.fit_transform(stroke_df['Alcohol Intake'])
-stroke_df['Physical Activity encode'] = le.fit_transform(stroke_df['Physical Activity'])
-stroke_df['Family History of Stroke encode'] = le.fit_transform(stroke_df['Family History of Stroke'])
-stroke_df['Dietary Habits encode'] = le.fit_transform(stroke_df['Dietary Habits'])
-stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
+      le = LabelEncoder()
+      stroke_df['Gender encode'] = le.fit_transform(stroke_df['Gender'])
+      stroke_df['Work Type encode'] = le.fit_transform(stroke_df['Work Type'])
+      stroke_df['Residence Type encode'] = le.fit_transform(stroke_df['Residence Type'])
+      stroke_df['Smoking Status encode'] = le.fit_transform(stroke_df['Smoking Status'])
+      stroke_df['Alcohol Intake encode'] = le.fit_transform(stroke_df['Alcohol Intake'])
+      stroke_df['Physical Activity encode'] = le.fit_transform(stroke_df['Physical Activity'])
+      stroke_df['Family History of Stroke encode'] = le.fit_transform(stroke_df['Family History of Stroke'])
+      stroke_df['Dietary Habits encode'] = le.fit_transform(stroke_df['Dietary Habits'])
+      stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
 
 Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan kolom aslinya tidak dihapus agar tetap bisa digunakan untuk analisis eksploratif.
 
@@ -237,11 +234,11 @@ Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan ko
 
 Fitur numerik dinormalisasi menggunakan `StandardScaler` agar memiliki mean = 0 dan standar deviasi = 1:
 
-python
-from sklearn.preprocessing import StandardScaler
+      python
+      from sklearn.preprocessing import StandardScaler
 
-scaler = StandardScaler()
-stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
+      scaler = StandardScaler()
+      stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
 
 Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
 
@@ -249,33 +246,37 @@ Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala s
 
 Dataset disusun ulang menjadi dua bagian:
 
-all_features = gabungan fitur numerik + semua kolom encode
+      all_features = gabungan fitur numerik + semua kolom encode
 
-x = semua fitur pada all_features kecuali kolom Age
+      x = semua fitur pada all_features kecuali kolom Age
 
-y = target label Diagnosis Stroke
+      y = target label Diagnosis Stroke
 
-x = stroke_df[all_features].drop('Age', axis=1)
-y = stroke_df['Diagnosis Stroke']
+      x = stroke_df[all_features].drop('Age', axis=1)
+      y = stroke_df['Diagnosis Stroke']
 
-X_train, X_test, y_train, y_test = train_test_split(
-x, y, test_size=0.2, stratify=y, random_state=42
-)
+      X_train, X_test, y_train, y_test = train_test_split(
+      x, y, test_size=0.2, stratify=y, random_state=42)
+
 Pembagian 80:20 bertujuan untuk memastikan generalisasi model yang baik, dan stratify digunakan agar distribusi kelas tetap proporsional.
 
-🧠 Diagnosis Stroke Custom Labeling
+### 🧠 Diagnosis Stroke Custom Labeling
+
 Untuk meningkatkan pemahaman risiko, dibuat label klasifikasi baru bernama Diagnosis Stroke, berdasarkan skor dari fitur risiko:
 
 Penyesuaian Label Smoking Status
 
-# Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
+#### Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
 
       def encode_smoking(smoking_val):
       return 0 if smoking_val < 0.5 else 1
 
       stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
-      Hitung Threshold Berdasarkan Pasien Stroke
+
+#### Hitung Threshold Berdasarkan Pasien Stroke
+
       diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
+
 
       thresholds = {
       'Age': diagnosis_positive['Age'].mean(),
@@ -285,26 +286,29 @@ Penyesuaian Label Smoking Status
       'Stress Levels': diagnosis_positive['Stress Levels'].mean(),
       'Smoking Status encode': diagnosis_positive['Smoking Status encode'].mean(),
       }
-      Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
 
-      Fungsi Klasifikasi Risiko
-      def classify_stroke(row):
-      score = 0
+Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
 
-    if row['Age'] >= thresholds['Age']: score += 1
-    if row['Heart Disease'] >= thresholds['Heart Disease']: score += 1
-    if row['Average Glucose Level'] >= thresholds['Average Glucose Level']: score += 1
-    if row['Family History of Stroke encode'] >= thresholds['Family History of Stroke encode']: score += 1
-    if row['Stress Levels'] >= thresholds['Stress Levels']: score += 1
-    if row['Smoking Status encode'] <= thresholds['Smoking Status encode']: score += 1  # Sering merokok
+#### Fungsi Klasifikasi Risiko
 
-    if row['Diagnosis encode'] == 1:
-        return 3 if score >= 5 else 2  # Stroke parah atau ringan
-    else:
-        return 1 if score >= 4 else 0  # Risiko tinggi atau aman
+def classify_stroke(row):
+score = 0
+
+      if row['Age'] >= thresholds['Age']: score += 1
+      if row['Heart Disease'] >= thresholds['Heart Disease']: score += 1
+      if row['Average Glucose Level'] >= thresholds['Average Glucose Level']: score += 1
+      if row['Family History of Stroke encode'] >= thresholds['Family History of Stroke encode']: score += 1
+      if row['Stress Levels'] >= thresholds['Stress Levels']: score += 1
+      if row['Smoking Status encode'] <= thresholds['Smoking Status encode']: score += 1  # Sering merokok
+
+      if row['Diagnosis encode'] == 1:
+         return 3 if score >= 5 else 2  # Stroke parah atau ringan
+      else:
+         return 1 if score >= 4 else 0  # Risiko tinggi atau aman
 
 stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
-Nilai klasifikasi:
+
+#### Nilai klasifikasi:
 
 0: Aman
 
@@ -313,6 +317,8 @@ Nilai klasifikasi:
 2: Stroke ringan/sedang
 
 3: Stroke parah
+
+---
 
 ## Modeling 🎯
 
@@ -337,9 +343,7 @@ KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan ke
 Alasan Pemilihan:
 
 - Sifat non-parametrik KNN efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks.
-
 - Parameter n_neighbors=30 dipilih untuk menyeimbangkan bias dan varians, cukup banyak tetangga untuk estimasi stabil.
-
 - Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
 
 ### 2. Random Forest 🌲
@@ -368,14 +372,14 @@ Alasan Pemilihan:
 
       from sklearn.ensemble import GradientBoostingClassifier
 
-boost = GradientBoostingClassifier(
-n_estimators=300,
-learning_rate=0.05,
-max_depth=5,
-subsample=0.8,
-random_state=42
-)
-boost.fit(X_train, y_train)
+      boost = GradientBoostingClassifier(
+      n_estimators=300,
+      learning_rate=0.05,
+      max_depth=5,
+      subsample=0.8,
+      random_state=42
+      )
+      boost.fit(X_train, y_train)
 
 Cara Kerja:
 
@@ -384,9 +388,7 @@ Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keput
 Alasan Pemilihan:
 
 - Sangat baik dalam meningkatkan performa klasifikasi pada dataset yang kompleks dan tidak seimbang.
-
 - Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
-
 - Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
 
 ## Evaluation
