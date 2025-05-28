@@ -160,16 +160,26 @@ Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif
 ![Visualisasi Perbandingan Penderita dan Non-Penderita](image/5.png)  
 ![Korelasi Matriks Fitur Numerical](image/6.png)
 
-## 📊 Data Preparation
+# Data Preparation
 
-Tahap data preparation sangat krusial agar model prediksi stroke dapat bekerja secara optimal. Berikut beberapa tahapan preprocessing yang telah dilakukan:
+Tahap **data preparation** sangat krusial agar model prediksi stroke dapat bekerja secara optimal. Berikut tahapan preprocessing yang telah dilakukan:
 
-1. 🔻 Feature Dropping
-   Beberapa fitur dihapus karena dianggap tidak relevan atau redundan terhadap tujuan utama penelitian.
+## 1. Feature Dropping
+
+Beberapa fitur dihapus karena dianggap tidak relevan atau redundan terhadap tujuan utama penelitian. Fitur yang dihapus adalah:
+
+- `Patient ID`
+- `Patient Name`
+- `Hypertension`
+- `Symptoms`
+- `Marital Status`
+- `Cholesterol Levels`
+- `Blood Pressure Levels`
+- `Stroke History`
+
+Alasan: Kolom-kolom tersebut tidak memberikan kontribusi signifikan terhadap prediksi, sehingga dihapus untuk menyederhanakan model dan mengurangi noise.
 
 python
-Salin
-Edit
 stroke_df.drop([
 'Patient ID',
 'Patient Name',
@@ -180,40 +190,36 @@ stroke_df.drop([
 'Blood Pressure Levels',
 'Stroke History'
 ], axis=1, inplace=True)
-Kolom-kolom tersebut tidak memberikan kontribusi signifikan terhadap prediksi, sehingga dihapus untuk menyederhanakan model.
 
 2. 🚨 Outlier Handling
-   Untuk mengurangi pengaruh data ekstrem yang bisa memengaruhi distribusi, kami menggunakan metode IQR (Interquartile Range) pada fitur numerik berikut:
 
-python
-Salin
-Edit
+Untuk mengurangi pengaruh data ekstrem yang dapat memengaruhi distribusi, digunakan metode **IQR (Interquartile Range)** pada fitur numerik berikut:
+
 num_features = [
-'Age', 'Heart Disease', 'Average Glucose Level',
-'Body Mass Index (BMI)', 'Stress Levels'
+'Age',
+'Heart Disease',
+'Average Glucose Level',
+'Body Mass Index (BMI)',
+'Stress Levels'
 ]
-Formula IQR:
-text
-Salin
-Edit
+
+Rumus IQR:
+
 IQR = Q3 - Q1
-Lower Bound = Q1 - 1.5 _ IQR
-Upper Bound = Q3 + 1.5 _ IQR
-Data di luar rentang tersebut dianggap sebagai outlier dan dilakukan capping (dijepit) agar tetap dalam batas wajar. Rentang umumnya:
 
-Age: 20–80
+Lower Bound = Q1 - 1.5 × IQR
 
-BMI: 15–35
+Upper Bound = Q3 + 1.5 × IQR
 
-Glucose: 70–200
-(Angka bervariasi tergantung distribusi aktual)
+Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** agar tetap dalam batas wajar.
 
 3. 🔠 Encoding Fitur Kategorikal
-   Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan LabelEncoder.
+
+Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan `LabelEncoder`:
 
 python
-Salin
-Edit
+from sklearn.preprocessing import LabelEncoder
+
 le = LabelEncoder()
 stroke_df['Gender encode'] = le.fit_transform(stroke_df['Gender'])
 stroke_df['Work Type encode'] = le.fit_transform(stroke_df['Work Type'])
@@ -224,16 +230,19 @@ stroke_df['Physical Activity encode'] = le.fit_transform(stroke_df['Physical Act
 stroke_df['Family History of Stroke encode'] = le.fit_transform(stroke_df['Family History of Stroke'])
 stroke_df['Dietary Habits encode'] = le.fit_transform(stroke_df['Dietary Habits'])
 stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
+
 Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan kolom aslinya tidak dihapus agar tetap bisa digunakan untuk analisis eksploratif.
 
 4. 🧪 Normalization
-   Fitur numerik dinormalisasi menggunakan StandardScaler agar memiliki mean = 0 dan standar deviasi = 1.
+
+Fitur numerik dinormalisasi menggunakan `StandardScaler` agar memiliki mean = 0 dan standar deviasi = 1:
 
 python
-Salin
-Edit
+from sklearn.preprocessing import StandardScaler
+
 scaler = StandardScaler()
 stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
+
 Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
 
 5. 🔄 Data Splitting
@@ -245,9 +254,6 @@ x = semua fitur pada all_features kecuali kolom Age
 
 y = target label Diagnosis Stroke
 
-python
-Salin
-Edit
 x = stroke_df[all_features].drop('Age', axis=1)
 y = stroke_df['Diagnosis Stroke']
 
@@ -271,9 +277,6 @@ return 0 if smoking_val < 0.5 else 1
 
 stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
 Hitung Threshold Berdasarkan Pasien Stroke
-python
-Salin
-Edit
 diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
 
 thresholds = {
@@ -287,9 +290,6 @@ thresholds = {
 Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
 
 Fungsi Klasifikasi Risiko
-python
-Salin
-Edit
 def classify_stroke(row):
 score = 0
 
@@ -305,9 +305,6 @@ score = 0
     else:
         return 1 if score >= 4 else 0  # Risiko tinggi atau aman
 
-python
-Salin
-Edit
 stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
 Nilai klasifikasi:
 
@@ -335,21 +332,15 @@ Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbor
    knn.fit(X_train, y_train)
    Cara Kerja:
 
-KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur.
-
-Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat.
-
-Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi).
-
-Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
+KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur. Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat. Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi). Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
 
 Alasan Pemilihan:
 
-Sifat non-parametrik KNN efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks.
+- Sifat non-parametrik KNN efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks.
 
-Parameter n_neighbors=30 dipilih untuk menyeimbangkan bias dan varians, cukup banyak tetangga untuk estimasi stabil.
+- Parameter n_neighbors=30 dipilih untuk menyeimbangkan bias dan varians, cukup banyak tetangga untuk estimasi stabil.
 
-Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
+- Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
 
 2. Random Forest
    from sklearn.ensemble import RandomForestClassifier
@@ -363,23 +354,13 @@ random_state=42
 rf.fit(X_train, y_train)
 Cara Kerja:
 
-Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih.
-
-Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas.
-
-Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon.
-
-Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
+Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih. Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas. Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon. Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
 
 Alasan Pemilihan:
 
-Sangat efektif menangani fitur numerik dan kategorik, serta interaksi kompleks antar fitur.
-
-Parameter max_depth=10 mengontrol kedalaman pohon agar tidak terlalu kompleks sehingga menghindari overfitting.
-
-class_weight='balanced' digunakan untuk mengatasi ketidakseimbangan kelas target dengan memberi bobot lebih pada kelas minoritas (pasien stroke).
-
-Cocok untuk data medis yang sensitif terhadap false negative karena recall penting.
+- Sangat efektif menangani fitur numerik dan kategorik, serta interaksi kompleks antar fitur.
+- Parameter max_depth=10 mengontrol kedalaman pohon agar tidak terlalu kompleks sehingga menghindari overfitting.
+- class_weight='balanced' digunakan untuk mengatasi ketidakseimbangan kelas target dengan memberi bobot lebih pada kelas minoritas (pasien stroke).
 
 3. Gradient Boosting
    from sklearn.ensemble import GradientBoostingClassifier
@@ -394,23 +375,15 @@ random_state=42
 boost.fit(X_train, y_train)
 Cara Kerja:
 
-Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners).
-
-Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif.
-
-Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran.
-
-subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi.
-
-max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
+Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners). Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif. Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran. subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi. max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
 
 Alasan Pemilihan:
 
-Sangat baik dalam meningkatkan performa klasifikasi pada dataset yang kompleks dan tidak seimbang.
+- Sangat baik dalam meningkatkan performa klasifikasi pada dataset yang kompleks dan tidak seimbang.
 
-Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
+- Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
 
-Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
+- Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
 
 ## Evaluation
 
