@@ -1,6 +1,6 @@
 # Laporan Proyek Machine Learning Prediksi Stroke Berdasarkan Kebiasaan Sehari-hari - Fajri Haryanto
 
-## Domain Proyek
+## 🌍 Domain Proyek
 
 Stroke merupakan salah satu penyakit yang memiliki tingkat kematian dan kecacatan tertinggi secara global. Organisasi Kesehatan Dunia (WHO) mencatat bahwa sekitar 15 juta orang di dunia mengalami stroke setiap tahunnya, dan sepertiganya mengalami kematian [1]. Di Indonesia, prevalensi stroke juga cukup tinggi, khususnya pada kelompok usia produktif. Hal ini menimbulkan dampak sosial dan ekonomi yang besar, baik bagi individu, keluarga, maupun negara [2].
 
@@ -8,12 +8,14 @@ Prediksi stroke secara dini menjadi krusial untuk menurunkan angka kejadian dan 
 
 Dalam proyek ini, **dikembangkan sebuah sistem prediksi risiko stroke dengan memanfaatkan algoritma Random Forest/KNN, Boosters Algorithm**. Model ini dilatih menggunakan data demografis (usia, jenis kelamin), gaya hidup (kebiasaan merokok, aktivitas fisik), serta kondisi kesehatan (tekanan darah, diabetes, dan lain-lain) untuk mengidentifikasi individu dengan potensi risiko tinggi terhadap stroke.
 
-**Urgensi Masalah**
+### ⚠️ Urgensi Masalah
+
 Deteksi dini terhadap risiko stroke memiliki peran penting dalam proses pencegahan dan pengobatan. Sayangnya, masih banyak masyarakat yang tidak menyadari bahwa gaya hidup sehari-hari berperan besar dalam meningkatkan risiko stroke. Selain itu, akses terhadap teknologi diagnostik masih terbatas, terutama di daerah dengan fasilitas kesehatan minimal.
 
 Dengan meningkatnya ketersediaan data kesehatan dan kemajuan teknologi ML, muncul peluang untuk mengembangkan sistem prediktif yang mampu memberikan peringatan dini secara otomatis dan akurat. Penelitian ini mencoba menjawab kebutuhan tersebut dengan mengembangkan model prediksi stroke berbasis data kebiasaan harian.
 
-**Tujuan Penelitian**
+### 🎯 Tujuan Penelitian
+
 Tujuan dari proyek ini adalah:
 
 1. Menganalisis dan mengolah data kebiasaan sehari-hari dan data demografis untuk membangun model prediksi risiko stroke.
@@ -22,144 +24,393 @@ Tujuan dari proyek ini adalah:
 
 3. Memberikan solusi yang dapat membantu masyarakat dan tenaga medis dalam melakukan deteksi dini secara digital dan preventif.
 
-## Business Understanding
+## 📊 Business Understanding
 
 Pemahaman bisnis merupakan langkah krusial dalam pengembangan sistem prediksi berbasis machine learning. Tahapan ini berfokus pada klarifikasi permasalahan yang hendak diselesaikan serta perumusan tujuan yang ingin dicapai, agar model yang dikembangkan dapat memberikan nilai nyata dalam konteks dunia nyata dalam hal ini, prediksi risiko stroke berdasarkan kebiasaan sehari-hari dan faktor demografis.
 
-### Problem Statements
+### ❓ Problem Statements
 
-1. urangnya deteksi dini terhadap risiko stroke di masyarakat.
-   Banyak individu tidak menyadari bahwa mereka memiliki risiko tinggi terkena stroke karena keterbatasan akses terhadap pemeriksaan medis dan rendahnya kesadaran terhadap faktor risiko sehari-hari.
+1. Kurangnya deteksi dini risiko stroke di masyarakat.  
+   Banyak individu tidak sadar risiko tinggi stroke akibat keterbatasan akses pemeriksaan medis dan rendahnya kesadaran faktor risiko sehari-hari.
 
-2. Data kesehatan yang tersedia bersifat mentah dan tidak langsung dapat digunakan untuk prediksi.
-   Data mentah seringkali mengandung outlier, nilai kosong, serta representasi fitur yang tidak seragam, sehingga memerlukan proses pembersihan dan transformasi agar model machine learning dapat mempelajarinya dengan efektif.
+2. Data kesehatan yang tersedia masih mentah dan belum siap prediksi.  
+   Data mengandung outlier, nilai kosong, dan fitur tidak seragam sehingga perlu pembersihan dan transformasi agar ML dapat mempelajarinya efektif.
 
-3. Belum ada model pembanding yang teruji untuk menentukan algoritma mana yang paling optimal.
-   Pemilihan algoritma machine learning tanpa eksperimen dan evaluasi yang sistematis dapat menghasilkan prediksi yang tidak akurat dan tidak dapat diandalkan dalam situasi nyata.
+3. Belum ada model pembanding teruji untuk menentukan algoritma optimal.  
+   Tanpa evaluasi sistematis, pemilihan algoritma bisa menghasilkan prediksi tidak akurat dan tidak dapat diandalkan.
 
-### Goals
+### 🎯 Goals
 
-1. Mengembangkan model prediktif yang mampu mengidentifikasi individu dengan risiko tinggi stroke secara akurat.
-   Model ini diharapkan mampu memberikan peringatan dini berdasarkan faktor gaya hidup dan kondisi kesehatan umum.
+1. Mengembangkan model prediktif yang akurat mengidentifikasi individu berisiko tinggi stroke, memberikan peringatan dini berdasarkan gaya hidup dan kondisi kesehatan.
+2. Melakukan eksplorasi dan transformasi data (EDA, penanganan outlier, encoding, normalisasi) agar data siap untuk pelatihan model.
+3. Membandingkan performa algoritma Random Forest, KNN, dan Booster Algorithm untuk memilih model dengan akurasi dan generalisasi terbaik.
 
-2. Melakukan proses eksplorasi dan transformasi data (EDA, outlier handling, encoding, normalization) agar data siap digunakan untuk pelatihan model.
-   Ini akan memastikan bahwa informasi penting dalam data dapat ditangkap secara optimal oleh algoritma yang digunakan.
+### 💡 Solution Statements
 
-3. Membandingkan performa beberapa algoritma (Random Forest, K-Nearest Neighbors, dan Booster Algorithm) untuk menemukan model dengan akurasi dan generalisasi terbaik.
-   Hasil evaluasi dari berbagai model akan menjadi dasar dalam pemilihan model akhir yang akan digunakan untuk prediksi.
+1. Menggunakan dan mengevaluasi tiga algoritma klasifikasi:
 
-### Solution statements
+   - Random Forest
+   - K-Nearest Neighbors (KNN)
+   - Booster Algorithm (Gradient Boosting)  
+     Ketiga algoritma dipilih karena pendekatan berbeda dalam klasifikasi, memungkinkan perbandingan performa menggunakan metrik akurasi, precision, recall, dan F1-score.
 
-1. Penggunaan dan evaluasi tiga algoritma klasifikasi: Random Forest, K-Nearest Neighbors (KNN), dan Booster Algorithm (Gradient Boosting).
-   Ketiga algoritma ini dipilih karena memiliki pendekatan berbeda dalam melakukan klasifikasi, sehingga dapat saling dibandingkan untuk menentukan metode terbaik berdasarkan performa akurasi, precision, recall, dan F1-score.
+2. Melakukan preprocessing menyeluruh meliputi:
 
-2. Melakukan penerapan proses preprocessing menyeluruh yang mencakup:
+   - **Exploratory Data Analysis (EDA):** Memahami distribusi data dan hubungan antar fitur.
+   - **Outlier Handling:** Menggunakan metode IQR untuk mengurangi pengaruh nilai ekstrem.
+   - **Encoding fitur kategorikal:** Label Encoder atau One-Hot Encoding untuk data numerik yang dipahami algoritma.
+   - **Normalisasi fitur:** StandardScaler untuk menyamakan skala nilai dan menghindari bias model terhadap fitur tertentu.
+   - **Split Data 80:20:** Memisahkan data latih dan uji untuk evaluasi objektif.
 
-   - Exploratory Data Analysis (EDA): untuk memahami distribusi data dan hubungan antar fitur.
+3. Evaluasi performa model menggunakan metrik:
+   - Accuracy
+   - Precision
+   - Recall
+   - F1-score  
+     Sehingga pemilihan model terbaik bukan hanya berdasarkan akurasi, tetapi juga kemampuan mendeteksi kelas minoritas (stroke).
 
-   - Outlier handling: menggunakan metode seperti IQR untuk mengurangi pengaruh nilai ekstrem.
+## 📊 Data Understanding - Stroke Prediction
 
-   - Encoding fitur kategorikal: menggunakan Label Encoder atau One-Hot Encoding untuk membuat data numerik yang dapat dimengerti oleh algoritma.
+Dataset yang digunakan dalam penelitian ini diambil dari Kaggle: [Stroke Prediction Dataset](https://www.kaggle.com/datasets/teamincribo/stroke-prediction). Dataset ini telah dimodifikasi dengan menambahkan beberapa fitur penting yang relevan untuk meningkatkan akurasi prediksi risiko stroke.
 
-   - Normalisasi fitur: menggunakan StandardScaler untuk menyamakan skala nilai agar model tidak bias terhadap fitur tertentu.
+Dataset ini berisi **15.000 baris** dan **22 fitur awal**, mencakup data demografis, gaya hidup, serta riwayat kesehatan pasien.
 
-   - Split data 80:20: membagi dataset menjadi data latih dan data uji untuk mengevaluasi performa secara objektif.
+---
 
-3. Evaluasi performa menggunakan metrik yang terukur:
-   Untuk menjamin kualitas model, digunakan metrik evaluasi yang mencakup accuracy, precision, recall, dan F1-score. Dengan ini, pemilihan model terbaik tidak hanya didasarkan pada akurasi saja, tetapi juga pada kemampuan mendeteksi kelas minoritas (stroke).
+## 🧱 Struktur Awal Dataset
 
-## Data Understanding
+| No  | Nama Fitur               | Tipe Data | Keterangan                                       |
+| --- | ------------------------ | --------- | ------------------------------------------------ |
+| 1   | Patient ID               | int64     | Nomor identitas unik pasien                      |
+| 2   | Patient Name             | object    | Nama pasien (informasi pribadi)                  |
+| 3   | Age                      | int64     | Usia pasien                                      |
+| 4   | Gender                   | object    | Jenis kelamin                                    |
+| 5   | Hypertension             | int64     | Riwayat hipertensi (0 = tidak, 1 = ya)           |
+| 6   | Heart Disease            | int64     | Riwayat penyakit jantung (0 = tidak, 1 = ya)     |
+| 7   | Marital Status           | object    | Status pernikahan                                |
+| 8   | Work Type                | object    | Jenis pekerjaan                                  |
+| 9   | Residence Type           | object    | Jenis tempat tinggal (Urban/Rural)               |
+| 10  | Average Glucose Level    | float64   | Rata-rata kadar glukosa darah (mg/dL)            |
+| 11  | BMI                      | float64   | Indeks massa tubuh (Body Mass Index)             |
+| 12  | Smoking Status           | object    | Status merokok                                   |
+| 13  | Alcohol Intake           | object    | Frekuensi konsumsi alkohol                       |
+| 14  | Physical Activity        | object    | Tingkat aktivitas fisik                          |
+| 15  | Stroke History           | int64     | Riwayat stroke sebelumnya                        |
+| 16  | Family History of Stroke | object    | Riwayat stroke dalam keluarga                    |
+| 17  | Dietary Habits           | object    | Pola makan                                       |
+| 18  | Stress Levels            | float64   | Tingkat stres                                    |
+| 19  | Blood Pressure Levels    | object    | Tekanan darah (kategori umum)                    |
+| 20  | Cholesterol Levels       | object    | Tingkat kolesterol (kategori umum)               |
+| 21  | Symptoms                 | object    | Gejala yang dialami (mengandung banyak missing)  |
+| 22  | Diagnosis                | object    | Diagnosis medis (tidak digunakan sebagai target) |
 
-Dataset yang digunakan dalam penelitian ini berasal dari Kaggle - Stroke Prediction Dataset, yang telah mengalami modifikasi untuk menambahkan beberapa fitur relevan guna meningkatkan kualitas prediksi. Dataset ini mencakup data demografis, kebiasaan sehari-hari, dan riwayat kesehatan individu. Data tersebut terdiri dari 13 fitur input dan 1 fitur target, yaitu stroke, yang bersifat biner (0 = tidak terkena stroke, 1 = terkena stroke).
+---
 
-### Variabel-variabel pada Restaurant UCI dataset adalah sebagai berikut:
+## ❌ Fitur yang Dihapus & Alasannya
 
-Berikut adalah penjelasan setiap variabel dalam dataset:
+| Fitur                   | Alasan Penghapusan                                                                |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `Patient ID`            | Identifier unik, tidak memiliki nilai prediktif                                   |
+| `Patient Name`          | Informasi pribadi yang tidak etis untuk dianalisis dan tidak berguna              |
+| `Hypertension`          | Lebih merupakan dampak dari gaya hidup, bukan faktor gaya hidup itu sendiri       |
+| `Stroke History`        | Menyebabkan kebocoran data (data leakage) karena sangat berkaitan langsung        |
+| `Marital Status`        | Tidak memiliki korelasi kuat terhadap kemungkinan stroke dalam fokus penelitian   |
+| `Cholesterol Levels`    | Data kategori yang tidak konsisten dan kurang informatif tanpa nilai numerik      |
+| `Blood Pressure Levels` | Sama seperti kolesterol, datanya bersifat umum dan tidak terukur dengan baik      |
+| `Symptoms`              | Mengandung sekitar 2.500 missing values (17%), tidak dapat diimputasi dengan baik |
 
-- age: usia pasien (numerik)
+---
 
-- gender: jenis kelamin pasien (kategori: Male, Female, Other)
+## ✅ Fitur yang Digunakan dalam Model
 
-- heart_disease: apakah pasien memiliki riwayat penyakit jantung (biner: 0 atau 1)
+Dataset akhir menggunakan **13 fitur input** dan **1 target output** (`stroke`). Berikut penjelasan masing-masing variabel:
 
-- work_type: jenis pekerjaan pasien (kategori: Private, Self-employed, Govt_job, Children, Never_worked)
+| Fitur                      | Tipe Data        | Deskripsi                                                                 |
+| -------------------------- | ---------------- | ------------------------------------------------------------------------- |
+| `age`                      | Numerik          | Usia pasien dalam tahun                                                   |
+| `gender`                   | Kategori         | Jenis kelamin: `Male`, `Female`, `Other`                                  |
+| `heart_disease`            | Biner (0/1)      | Riwayat penyakit jantung                                                  |
+| `work_type`                | Kategori         | Jenis pekerjaan: `Private`, `Self-employed`, `Govt_job`, `Children`, dll. |
+| `residence_type`           | Kategori         | Jenis tempat tinggal: `Urban`, `Rural`                                    |
+| `avg_glucose_level`        | Numerik          | Rata-rata kadar glukosa darah                                             |
+| `bmi`                      | Numerik          | Indeks massa tubuh                                                        |
+| `smoking_status`           | Kategori         | Status merokok: `formerly smoked`, `never smoked`, `smokes`, `unknown`    |
+| `alcohol_intake`           | Kategori/Ordinal | Frekuensi konsumsi alkohol: `Low`, `Moderate`, `High`                     |
+| `physical_activity`        | Kategori         | Tingkat aktivitas fisik: `Low`, `Moderate`, `High`                        |
+| `family_history_of_stroke` | Biner (0/1)      | Riwayat stroke dalam keluarga                                             |
+| `dietary_habits`           | Kategori         | Pola makan: `Balanced`, `Unbalanced`                                      |
+| `stress_levels`            | Ordinal          | Tingkat stres: `Low`, `Moderate`, `High`                                  |
+| `stroke`                   | Biner (0/1)      | Target: Apakah pasien terkena stroke (`1 = ya`, `0 = tidak`)              |
 
-- Residence_type: tempat tinggal pasien (kategori: Urban, Rural)
+---
 
-- avg_glucose_level: rata-rata kadar glukosa darah (numerik, mg/dL)
+Dataset ini difokuskan untuk memahami **hubungan antara kebiasaan hidup dan potensi risiko stroke**, tanpa menyertakan data medis lanjutan yang dapat menimbulkan bias atau kebocoran data (leakage).  
+Pendekatan ini memungkinkan model untuk bekerja secara lebih adil, transparan, dan aplikatif di konteks pencegahan dini.
 
-- bmi: indeks massa tubuh (Body Mass Index) (numerik)
+---
 
-- smoking_status: status merokok pasien (kategori: formerly smoked, never smoked, smokes, unknown)
-
-- alcohol_intake: frekuensi konsumsi alkohol (kategori atau ordinal: Low, Moderate, High)
-
-- physical_activity: tingkat aktivitas fisik (kategori: Low, Moderate, High)
-
-- family_history_of_stroke: apakah memiliki riwayat keluarga terkena stroke (biner: 0 atau 1)
-
-- dietary_habits: pola makan (kategori: Balanced, Unbalanced)
-
-- stress_levels: tingkat stres (kategori atau ordinal: Low, Moderate, High)
-
-- stroke: target variabel, apakah pasien pernah mengalami stroke (biner: 0 = tidak, 1 = ya)
-
-### Exploratory Data Analysis (EDA)
+### 🔍 Exploratory Data Analysis (EDA)
 
 Untuk memahami karakteristik dan distribusi data, dilakukan analisis eksploratif menggunakan teknik visualisasi seperti histogram, heatmap korelasi, dan countplot.
 
-![Histogram Fitur Numerical](image/1.png)
-![Visualisasi Persebaran Fitur Numerical](image/2.png)
-![Visualisasi Persebaran Gender](image/3.png)
-![Visualisasi Persebaran Histori Keturunan Struk](image/4.png)
-![Visualisasi Perbandingan Penderita dan NonPenderita](image/5.png)
+![Histogram Fitur Numerical](image/1.png)  
+![Visualisasi Persebaran Fitur Numerical](image/2.png)  
+![Visualisasi Persebaran Gender](image/3.png)  
+![Visualisasi Persebaran Histori Keturunan Stroke](image/4.png)  
+![Visualisasi Perbandingan Penderita dan Non-Penderita](image/5.png)  
 ![Korelasi Matriks Fitur Numerical](image/6.png)
 
-## Data Preparation
+## 📊 Data Preparation
 
-Data preparation merupakan tahap penting untuk memastikan model dapat bekerja secara optimal. Pada tahap ini dataset yang digunakan saat dicek, tidak ditemukan mssing value maupun duplikasi data. Adapaun beberapa teknik preprocessing data yang kami terapkan
+Tahap data preparation sangat krusial agar model prediksi stroke dapat bekerja secara optimal. Berikut beberapa tahapan preprocessing yang telah dilakukan:
 
-1. Encoding Fitur Kategorikal
-   Fitur kategorikal seperti gender, work_type, Residence_type, smoking_status, dan lainnya diubah menjadi representasi numerik menggunakan Label encoder
+1. 🔻 Feature Dropping
+   Beberapa fitur dihapus karena dianggap tidak relevan atau redundan terhadap tujuan utama penelitian.
 
-2. Outlier Handling
-   Deteksi dan penanganan outlier dilakukan dengan:
+python
+Salin
+Edit
+stroke_df.drop([
+'Patient ID',
+'Patient Name',
+'Hypertension',
+'Symptoms',
+'Marital Status',
+'Cholesterol Levels',
+'Blood Pressure Levels',
+'Stroke History'
+], axis=1, inplace=True)
+Kolom-kolom tersebut tidak memberikan kontribusi signifikan terhadap prediksi, sehingga dihapus untuk menyederhanakan model.
 
-Menggunakan IQR method pada variabel numerik seperti bmi dan avg_glucose_level dan fitur numerik lainnya
+2. 🚨 Outlier Handling
+   Untuk mengurangi pengaruh data ekstrem yang bisa memengaruhi distribusi, kami menggunakan metode IQR (Interquartile Range) pada fitur numerik berikut:
 
-Outlier yang ekstrem dipotong (capping) agar tidak mengganggu distribusi data.
+python
+Salin
+Edit
+num_features = [
+'Age', 'Heart Disease', 'Average Glucose Level',
+'Body Mass Index (BMI)', 'Stress Levels'
+]
+Formula IQR:
+text
+Salin
+Edit
+IQR = Q3 - Q1
+Lower Bound = Q1 - 1.5 _ IQR
+Upper Bound = Q3 + 1.5 _ IQR
+Data di luar rentang tersebut dianggap sebagai outlier dan dilakukan capping (dijepit) agar tetap dalam batas wajar. Rentang umumnya:
 
-3. Normalization
-   Normalisasi dilakukan menggunakan StandardScaler untuk menstandarkan skala fitur numerik agar memiliki mean = 0 dan standar deviasi = 1, terutama untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
+Age: 20–80
 
-4. Data Splitting
-   Dataset dibagi menjadi:
+BMI: 15–35
 
-Training set: 80%
+Glucose: 70–200
+(Angka bervariasi tergantung distribusi aktual)
 
-Test set: 20%
-Pembagian ini bertujuan untuk melatih model pada sebagian besar data dan menguji performanya pada data yang belum pernah dilihat.
+3. 🔠 Encoding Fitur Kategorikal
+   Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan LabelEncoder.
+
+python
+Salin
+Edit
+le = LabelEncoder()
+stroke_df['Gender encode'] = le.fit_transform(stroke_df['Gender'])
+stroke_df['Work Type encode'] = le.fit_transform(stroke_df['Work Type'])
+stroke_df['Residence Type encode'] = le.fit_transform(stroke_df['Residence Type'])
+stroke_df['Smoking Status encode'] = le.fit_transform(stroke_df['Smoking Status'])
+stroke_df['Alcohol Intake encode'] = le.fit_transform(stroke_df['Alcohol Intake'])
+stroke_df['Physical Activity encode'] = le.fit_transform(stroke_df['Physical Activity'])
+stroke_df['Family History of Stroke encode'] = le.fit_transform(stroke_df['Family History of Stroke'])
+stroke_df['Dietary Habits encode'] = le.fit_transform(stroke_df['Dietary Habits'])
+stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
+Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan kolom aslinya tidak dihapus agar tetap bisa digunakan untuk analisis eksploratif.
+
+4. 🧪 Normalization
+   Fitur numerik dinormalisasi menggunakan StandardScaler agar memiliki mean = 0 dan standar deviasi = 1.
+
+python
+Salin
+Edit
+scaler = StandardScaler()
+stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
+Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
+
+5. 🔄 Data Splitting
+   Dataset disusun ulang menjadi dua bagian:
+
+all_features = gabungan fitur numerik + semua kolom encode
+
+x = semua fitur pada all_features kecuali kolom Age
+
+y = target label Diagnosis Stroke
+
+python
+Salin
+Edit
+x = stroke_df[all_features].drop('Age', axis=1)
+y = stroke_df['Diagnosis Stroke']
+
+X_train, X_test, y_train, y_test = train_test_split(
+x, y, test_size=0.2, stratify=y, random_state=42
+)
+Pembagian 80:20 bertujuan untuk memastikan generalisasi model yang baik, dan stratify digunakan agar distribusi kelas tetap proporsional.
+
+🧠 Diagnosis Stroke Custom Labeling
+Untuk meningkatkan pemahaman risiko, dibuat label klasifikasi baru bernama Diagnosis Stroke, berdasarkan skor dari fitur risiko:
+
+Penyesuaian Label Smoking Status
+python
+Salin
+Edit
+
+# Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
+
+def encode_smoking(smoking_val):
+return 0 if smoking_val < 0.5 else 1
+
+stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
+Hitung Threshold Berdasarkan Pasien Stroke
+python
+Salin
+Edit
+diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
+
+thresholds = {
+'Age': diagnosis_positive['Age'].mean(),
+'Heart Disease': diagnosis_positive['Heart Disease'].mean(),
+'Average Glucose Level': diagnosis_positive['Average Glucose Level'].mean(),
+'Family History of Stroke encode': diagnosis_positive['Family History of Stroke encode'].mean(),
+'Stress Levels': diagnosis_positive['Stress Levels'].mean(),
+'Smoking Status encode': diagnosis_positive['Smoking Status encode'].mean(),
+}
+Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
+
+Fungsi Klasifikasi Risiko
+python
+Salin
+Edit
+def classify_stroke(row):
+score = 0
+
+    if row['Age'] >= thresholds['Age']: score += 1
+    if row['Heart Disease'] >= thresholds['Heart Disease']: score += 1
+    if row['Average Glucose Level'] >= thresholds['Average Glucose Level']: score += 1
+    if row['Family History of Stroke encode'] >= thresholds['Family History of Stroke encode']: score += 1
+    if row['Stress Levels'] >= thresholds['Stress Levels']: score += 1
+    if row['Smoking Status encode'] <= thresholds['Smoking Status encode']: score += 1  # Sering merokok
+
+    if row['Diagnosis encode'] == 1:
+        return 3 if score >= 5 else 2  # Stroke parah atau ringan
+    else:
+        return 1 if score >= 4 else 0  # Risiko tinggi atau aman
+
+python
+Salin
+Edit
+stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
+Nilai klasifikasi:
+
+0: Aman
+
+1: Berpotensi tinggi
+
+2: Stroke ringan/sedang
+
+3: Stroke parah
 
 ## Modeling
 
-Dalam proyek ini digunakan tiga algoritma klasifikasi, yaitu K-Nearest Neighbors (KNN), Random Forest, dan Gradient Boosting. Ketiga algoritma ini dipilih karena masing-masing memiliki karakteristik yang sesuai dengan kompleksitas dan tipe data pada kasus prediksi stroke, yang melibatkan fitur-fitur numerik, kategorik, serta distribusi target yang tidak seimbang.
+Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbors (KNN), Random Forest, dan Gradient Boosting. Ketiganya dipilih karena masing-masing memiliki mekanisme dan keunggulan yang cocok dengan karakteristik dataset prediksi risiko stroke, yang melibatkan data numerik, kategorik, serta distribusi target yang tidak seimbang.
 
 ![Fitur yang dipakai analisis prediksi](image/7.png)
 
 1. K-Nearest Neighbors (KNN)
-   Parameter: n_neighbors=30, p=1, weights='distance'
+   knn = KNeighborsClassifier(
+   n_neighbors=30,
+   weights='distance',
+   metric='minkowski',
+   p=1
+   )
+   knn.fit(X_train, y_train)
+   Cara Kerja:
 
-Alasan Pemilihan: KNN dipilih karena metode ini sederhana namun efektif untuk mendeteksi pola pada data berbasis jarak. Parameter weights='distance' membuat model memberi bobot lebih pada tetangga yang lebih dekat, meningkatkan akurasi pada data dengan sebaran kompleks.
+KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur.
+
+Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat.
+
+Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi).
+
+Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
+
+Alasan Pemilihan:
+
+Sifat non-parametrik KNN efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks.
+
+Parameter n_neighbors=30 dipilih untuk menyeimbangkan bias dan varians, cukup banyak tetangga untuk estimasi stabil.
+
+Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
 
 2. Random Forest
-   Parameter: n_estimators=300, max_depth=15, min_samples_leaf=4, min_samples_split=10, class_weight='balanced'
+   from sklearn.ensemble import RandomForestClassifier
 
-Alasan Pemilihan: Random Forest unggul dalam menangani fitur yang saling berinteraksi dan mencegah overfitting melalui teknik ensemble. Penyesuaian parameter dilakukan agar model tidak terlalu dalam (menghindari overfitting) dan menangani ketidakseimbangan kelas dengan class_weight='balanced'.
+rf = RandomForestClassifier(
+n_estimators=100,
+max_depth=10,
+class_weight='balanced',
+random_state=42
+)
+rf.fit(X_train, y_train)
+Cara Kerja:
+
+Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih.
+
+Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas.
+
+Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon.
+
+Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
+
+Alasan Pemilihan:
+
+Sangat efektif menangani fitur numerik dan kategorik, serta interaksi kompleks antar fitur.
+
+Parameter max_depth=10 mengontrol kedalaman pohon agar tidak terlalu kompleks sehingga menghindari overfitting.
+
+class_weight='balanced' digunakan untuk mengatasi ketidakseimbangan kelas target dengan memberi bobot lebih pada kelas minoritas (pasien stroke).
+
+Cocok untuk data medis yang sensitif terhadap false negative karena recall penting.
 
 3. Gradient Boosting
-   Parameter: n_estimators=300, learning_rate=0.05, max_depth=5, subsample=0.8
+   from sklearn.ensemble import GradientBoostingClassifier
 
-Alasan Pemilihan: Algoritma ini memperbaiki kesalahan model secara iteratif, sangat cocok untuk meningkatkan performa klasifikasi dalam dataset yang kompleks. Kombinasi learning_rate dan subsample membantu menghindari overfitting.
+boost = GradientBoostingClassifier(
+n_estimators=300,
+learning_rate=0.05,
+max_depth=5,
+subsample=0.8,
+random_state=42
+)
+boost.fit(X_train, y_train)
+Cara Kerja:
+
+Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners).
+
+Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif.
+
+Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran.
+
+subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi.
+
+max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
+
+Alasan Pemilihan:
+
+Sangat baik dalam meningkatkan performa klasifikasi pada dataset yang kompleks dan tidak seimbang.
+
+Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
+
+Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
 
 ## Evaluation
 
