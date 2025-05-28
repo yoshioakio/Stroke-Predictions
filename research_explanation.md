@@ -291,8 +291,8 @@ Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk k
 
 #### Fungsi Klasifikasi Risiko
 
-def classify_stroke(row):
-score = 0
+      def classify_stroke(row):
+      score = 0
 
       if row['Age'] >= thresholds['Age']: score += 1
       if row['Heart Disease'] >= thresholds['Heart Disease']: score += 1
@@ -306,21 +306,21 @@ score = 0
       else:
          return 1 if score >= 4 else 0  # Risiko tinggi atau aman
 
-stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
+      stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
 
-#### Nilai klasifikasi:
+#### Nilai klasifikasi
 
-0: Aman
+0: **Aman**
 
-1: Berpotensi tinggi
+1: **Berpotensi tinggi**
 
-2: Stroke ringan/sedang
+2: **Stroke ringan/sedang**
 
-3: Stroke parah
+3: **Stroke parah**
 
 ---
 
-## Modeling 🎯
+## 🛠️ Modeling
 
 Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbors (KNN), Random Forest, dan Gradient Boosting. Ketiganya dipilih karena masing-masing memiliki mekanisme dan keunggulan yang cocok dengan karakteristik dataset prediksi risiko stroke, yang melibatkan data numerik, kategorik, serta distribusi target yang tidak seimbang.
 
@@ -391,7 +391,9 @@ Alasan Pemilihan:
 - Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
 - Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
 
-## Evaluation
+---
+
+## 🎯 Evaluation
 
 | Metrik    | K-Nearest Neighbor | Random Forest | Boosting Algorithm |
 | --------- | ------------------ | ------------- | ------------------ |
@@ -410,7 +412,9 @@ Hasil menunjukkan bahwa Boosting Algorithm memberikan akurasi terbaik secara kes
 
 Model KNN menunjukkan gejala overfitting karena akurasi pelatihan 100% namun akurasi pengujian hanya 87.5%. Model Boosting dan Random Forest menunjukkan keseimbangan yang lebih baik antara akurasi pelatihan dan pengujian, menandakan generalisasi yang lebih baik terhadap data baru.
 
-## Model Terbaik & Conclusion
+---
+
+## 🎖️ Model Terbaik & Conclusion
 
 Dalam proyek ini, telah dikembangkan sistem klasifikasi risiko stroke berbasis machine learning menggunakan dataset yang mencerminkan faktor-faktor penting seperti usia, riwayat kesehatan, gaya hidup, dan kebiasaan pasien. Melalui tahapan modeling dan evaluasi, tiga algoritma diuji: K-Nearest Neighbor, Random Forest, dan Gradient Boosting.
 
@@ -418,7 +422,9 @@ Hasil evaluasi menunjukkan **bahwa Random Forest merupakan model terbaik berdasa
 
 Dengan performa yang seimbang, interpretabilitas yang baik, dan ketahanan terhadap overfitting, model ini dapat diadopsi sebagai pendukung pengambilan keputusan dalam diagnosis dini stroke, membantu meningkatkan efisiensi penanganan dan pencegahan penyakit secara lebih tepat sasaran.
 
-## Referensi
+---
+
+## 💎 Referensi
 
 1. World Health Organization, “The top 10 causes of death,” WHO, 2020.  
    [Online]. Available: [https://www.who.int/news-room/fact-sheets/detail/the-top-10-causes-of-death](https://www.who.int/news-room/fact-sheets/detail/the-top-10-causes-of-death)
