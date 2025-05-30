@@ -266,9 +266,10 @@ Fitur numerik dinormalisasi menggunakan `StandardScaler` agar memiliki mean = 0 
 
       X_scaled = (X - μ) / σ
 
-  Di mana:
-  𝜇 = rata-rata
-  𝜎 = standar deviasi
+Di mana:
+
+- 𝜇 = rata-rata
+- 𝜎 = standar deviasi
 
 - Hasilnya dimasukkan kembali ke dataframe **(stroke_df[num_features])** untuk menggantikan nilai aslinya.
 
