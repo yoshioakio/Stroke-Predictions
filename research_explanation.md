@@ -189,6 +189,14 @@ Alasan: Kolom-kolom tersebut tidak memberikan kontribusi signifikan terhadap pre
          'Stroke History'
          ], axis=1, inplace=True)
 
+Penjelasan Sederhana:
+
+- **.drop([...])** → Ini adalah perintah untuk menghapus kolom atau baris dari DataFrame.
+- **axis=1** → Artinya kode/perintah untuk menghapus kolom fitur tersebut, bukan baris.
+- **inplace=True** → Perubahan ini langsung diterapkan ke stroke_df tanpa harus disimpan ke variabel baru.
+
+Kode ini menghapus 8 kolom dari data karena dianggap tidak penting atau mengganggu akurasi model. Tujuannya supaya model lebih fokus pada fitur yang benar-benar berguna.
+
 ## 2. 🚨 Outlier Handling
 
 Untuk mengurangi pengaruh data ekstrem yang dapat memengaruhi distribusi, digunakan metode **IQR (Interquartile Range)** pada fitur numerik berikut:
@@ -210,6 +218,17 @@ Rumus IQR:
       Upper Bound = Q3 + 1.5 × IQR
 
 Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** agar tetap dalam batas wajar.
+
+🔍 Penjelasan Kodenya:
+
+- quantile(0.25) → Ambil nilai Q1 (25%)
+- quantile(0.75) → Ambil nilai Q3 (75%)
+- Hitung IQR → Selisih antara Q3 dan Q1
+- clip(lower, upper) → Fungsi ini otomatis:
+  - Nilai < lower → diganti dengan lower
+  - Nilai > upper → diganti dengan upper
+
+Kode ini ngecek apakah ada angka yang kelewat tinggi atau rendah banget di kolom tertentu, terus dipotong supaya tetap dalam range yang masuk akal. Supaya model nggak kaget lihat data aneh.
 
 ## 3. 🔠 Encoding Fitur Kategorikal
 
@@ -239,6 +258,19 @@ Fitur numerik dinormalisasi menggunakan `StandardScaler` agar memiliki mean = 0 
 
       scaler = StandardScaler()
       stroke_df[num_features] = scaler.fit_transform(stroke_df[num_features])
+
+📌 Penjelasan singkat:
+
+- **fit()** → hitung mean (μ) dan standard deviation (σ)
+- **transform()** → ubah nilai pakai rumus:
+
+      X_scaled = (X - μ) / σ
+
+  Di mana:
+  𝜇 = rata-rata
+  𝜎 = standar deviasi
+
+- Hasilnya dimasukkan kembali ke dataframe **(stroke_df[num_features])** untuk menggantikan nilai aslinya.
 
 Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
 
@@ -310,13 +342,14 @@ Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk k
 
 #### Nilai klasifikasi
 
-0: **Aman**
+| Label | Keterangan               |
+| ----- | ------------------------ |
+| 0     | **Aman** – Risiko rendah |
+| 1     | **Berpotensi tinggi**    |
+| 2     | **Stroke ringan/sedang** |
+| 3     | **Stroke parah**         |
 
-1: **Berpotensi tinggi**
-
-2: **Stroke ringan/sedang**
-
-3: **Stroke parah**
+Fungsi ini menghitung skor risiko stroke dengan menjumlahkan faktor-faktor risiko utama yang nilainya sama atau lebih besar dari threshold rata-rata pasien stroke, yaitu usia, penyakit jantung, kadar glukosa rata-rata, riwayat keluarga stroke, dan level stres. Untuk status merokok, skor bertambah jika nilai encode-nya lebih kecil atau sama dengan threshold (karena angka lebih kecil berarti lebih sering merokok). Setelah skor dihitung, fungsi mengklasifikasikan risiko menjadi empat kelas: jika pasien sudah terdiagnosis stroke dan skornya 5 atau lebih, dikategorikan sebagai stroke parah (3), jika kurang dari itu sebagai stroke ringan/sedang (2). Jika pasien belum terdiagnosis, skor 4 atau lebih diklasifikasikan sebagai risiko tinggi (1), dan di bawah itu sebagai aman (0). Fungsi ini kemudian diaplikasikan ke setiap baris data menggunakan .apply() dengan axis=1 dan hasilnya disimpan di kolom baru Diagnosis Stroke.
 
 ---
 
@@ -338,13 +371,14 @@ Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbor
 
 Cara Kerja:
 
-KNN adalah algoritma berbasis instance yang melakukan klasifikasi berdasarkan kedekatan jarak ke titik-titik tetangga terdekat dalam ruang fitur. **Dalam kasus klasifikasi, model menentukan kelas dari data baru berdasarkan mayoritas kelas dari k tetangga terdekat**. Jarak yang digunakan adalah Minkowski distance dengan parameter p=1 yang sama dengan Manhattan distance (penjumlahan nilai absolut per dimensi). Parameter weights='distance' memberikan bobot lebih besar pada tetangga yang lebih dekat sehingga pengaruh tetangga dekat lebih dominan dibanding yang jauh.
+KNN adalah **algoritma berbasis instance yang mengklasifikasikan data baru berdasarkan kelas mayoritas dari k tetangga terdekatnya dalam ruang fitur**. Jarak yang digunakan adalah Minkowski distance dengan parameter p=1, yang ekuivalen dengan Manhattan distance (penjumlahan nilai absolut per dimensi). Parameter weights='distance' membuat tetangga yang lebih dekat memiliki bobot pengaruh lebih besar, sehingga keputusan klasifikasi lebih dipengaruhi oleh tetangga yang benar-benar dekat.
 
 Alasan Pemilihan:
 
-- Sifat non-parametrik KNN efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks.
-- Parameter n_neighbors=30 dipilih untuk menyeimbangkan bias dan varians, cukup banyak tetangga untuk estimasi stabil.
-- Bobot jarak membantu meningkatkan akurasi pada data dengan sebaran yang tidak homogen.
+- KNN bersifat non-parametrik, efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks dan tidak linear.
+- Pemilihan \**n_neighbors=30*8 bertujuan menyeimbangkan bias dan varians: cukup banyak tetangga untuk estimasi yang stabil tanpa overfitting.
+- Pemberian bobot jarak (weights='distance') meningkatkan akurasi pada dataset dengan sebaran yang tidak homogen, memastikan tetangga yang sangat dekat berpengaruh dominan.
+- Penggunaan **metric='minkowski'** dengan **p=1** (Manhattan distance) lebih tahan terhadap outlier dibanding Euclidean, relevan untuk data yang berisi fitur numerik dengan rentang berbeda.
 
 ### 2. Random Forest 🌲
 
@@ -360,13 +394,15 @@ Alasan Pemilihan:
 
 Cara Kerja:
 
-Random Forest merupakan ensemble dari banyak decision tree yang masing-masing dilatih pada sampel bootstrap (bagging) data latih. **Setiap pohon membuat prediksi independen, dan hasil akhir ditentukan melalui voting mayoritas.** Fitur acak juga dipilih saat membangun tiap pohon untuk meningkatkan diversitas pohon. Pendekatan ini mengurangi overfitting yang sering muncul pada pohon keputusan tunggal dan meningkatkan generalisasi.
+Random Forest adalah **metode ensemble yang membangun banyak pohon keputusan (decision trees) dengan teknik bootstrap sampling (bagging) pada data pelatihan.** Setiap pohon dilatih secara independen menggunakan subset fitur acak untuk meningkatkan keragaman antar pohon. Prediksi akhir dilakukan berdasarkan voting mayoritas dari semua pohon. Pendekatan ini membantu mengurangi overfitting yang umum terjadi pada pohon tunggal dan meningkatkan kemampuan generalisasi model.
 
 Alasan Pemilihan:
 
-- Sangat efektif menangani fitur numerik dan kategorik, serta interaksi kompleks antar fitur.
-- Parameter max_depth=10 mengontrol kedalaman pohon agar tidak terlalu kompleks sehingga menghindari overfitting.
-- class_weight='balanced' digunakan untuk mengatasi ketidakseimbangan kelas target dengan memberi bobot lebih pada kelas minoritas (pasien stroke).
+- Random Forest efektif menangani data dengan kombinasi fitur numerik dan kategorikal serta dapat menangkap interaksi kompleks antar fitur.
+- Parameter **n_estimators=100** memberikan jumlah pohon yang cukup untuk stabilitas prediksi tanpa memperberat komputasi secara berlebihan.
+- **max_depth=10** mengatur kedalaman maksimum setiap pohon agar tidak terlalu dalam, sehingga menghindari overfitting dan menjaga model tetap generalis.
+- Penggunaan class_weight='balanced' memberikan bobot lebih pada kelas minoritas (pasien stroke), membantu mengatasi masalah ketidakseimbangan kelas dalam dataset.
+- **random_state=42** digunakan untuk memastikan reproducibility hasil pelatihan model.
 
 ### 3. Gradient Boosting 🚀
 
@@ -383,13 +419,16 @@ Alasan Pemilihan:
 
 Cara Kerja:
 
-Gradient Boosting membangun model secara bertahap dengan menambahkan pohon keputusan kecil (weak learners). **Setiap model baru fokus memperbaiki kesalahan prediksi model sebelumnya dengan meminimalkan fungsi loss secara iteratif.** Parameter learning_rate mengontrol kontribusi setiap pohon, membantu menghindari overfitting dengan memperlambat pembelajaran. subsample=0.8 berarti setiap pohon dilatih hanya pada 80% sampel secara acak, menambah variasi dan regularisasi. max_depth=5 menjaga kompleksitas tiap pohon agar tetap sederhana.
+Gradient Boosting adalah **metode ensemble yang membangun model secara bertahap dengan menambahkan banyak pohon keputusan kecil (weak learners).** Setiap pohon baru berfokus pada memperbaiki kesalahan prediksi dari model sebelumnya dengan cara meminimalkan fungsi loss secara iteratif. Parameter learning_rate mengontrol seberapa besar kontribusi setiap pohon terhadap model akhir, sehingga memperlambat pembelajaran dan mengurangi risiko overfitting. Penggunaan subsample=0.8 berarti setiap pohon hanya dilatih pada 80% sampel data yang dipilih secara acak, menambah variasi model sekaligus berfungsi sebagai regularisasi.
+max_depth=5 membatasi kompleksitas tiap pohon agar tetap sederhana dan tidak overfit.
 
 Alasan Pemilihan:
 
-- Sangat baik dalam meningkatkan performa klasifikasi pada dataset yang kompleks dan tidak seimbang.
-- Memperbaiki kelemahan model secara bertahap, menghasilkan prediksi lebih akurat.
-- Kombinasi learning_rate dan subsample efektif mengurangi risiko overfitting.
+- Sangat efektif meningkatkan performa klasifikasi pada dataset yang kompleks dengan fitur campuran dan target yang tidak seimbang.
+- Model secara bertahap memperbaiki kesalahan dari iterasi sebelumnya sehingga menghasilkan prediksi yang lebih akurat.
+- Kombinasi learning_rate yang kecil dan subsample memberikan keseimbangan antara pembelajaran yang stabil dan regularisasi untuk menghindari overfitting.
+- **n_estimators=300** dipilih agar model belajar cukup banyak iterasi untuk mencapai performa optimal tanpa terlalu berat secara komputasi.
+- **random_state=42** memastikan hasil pelatihan yang dapat direproduksi.
 
 ---
 
