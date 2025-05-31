@@ -363,8 +363,8 @@ KNN adalah **algoritma berbasis instance yang mengklasifikasikan data baru berda
 Alasan Pemilihan:
 
 - KNN bersifat non-parametrik, efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks dan tidak linear.
-- Pemilihan \*_n_neighbors=30_ bertujuan menyeimbangkan bias dan varians: cukup banyak tetangga untuk estimasi yang stabil tanpa overfitting.
-- Pemberian bobot jarak (weights='distance') meningkatkan akurasi pada dataset dengan sebaran yang tidak homogen, memastikan tetangga yang sangat dekat berpengaruh dominan.
+- Pemilihan **n_neighbors=30** bertujuan menyeimbangkan bias dan varians: cukup banyak tetangga untuk estimasi yang stabil tanpa overfitting.
+- Pemberian bobot jarak **(weights='distance')** meningkatkan akurasi pada dataset dengan sebaran yang tidak homogen, memastikan tetangga yang sangat dekat berpengaruh dominan.
 - Penggunaan **metric='minkowski'** dengan **p=1** (Manhattan distance) lebih tahan terhadap outlier dibanding Euclidean, relevan untuk data yang berisi fitur numerik dengan rentang berbeda.
 
 ### 2. Random Forest 🌲
@@ -391,8 +391,8 @@ Alasan Pemilihan:
 - Random Forest efektif menangani data dengan kombinasi fitur numerik dan kategorikal serta dapat menangkap interaksi kompleks antar fitur.
 - Parameter **n_estimators=300** memberikan jumlah pohon yang cukup untuk stabilitas prediksi tanpa memperberat komputasi secara berlebihan.
 - **max_depth=15** mengatur kedalaman maksimum setiap pohon agar tidak terlalu dalam, sehingga menghindari overfitting dan menjaga model tetap generalis.
-- Penggunaan **class_weight='balanced'** memberikan bobot lebih pada kelas minoritas (pasien stroke), membantu mengatasi masalah ketidakseimbangan kelas dalam dataset.
 - **random_state=123** digunakan untuk memastikan reproducibility hasil pelatihan model.
+- Penggunaan **class_weight='balanced'** memberikan bobot lebih pada kelas minoritas (pasien stroke), membantu mengatasi masalah ketidakseimbangan kelas dalam dataset.
 
 ### 3. Gradient Boosting 🚀
 
