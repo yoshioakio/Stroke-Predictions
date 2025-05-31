@@ -217,18 +217,7 @@ Rumus IQR:
 
       Upper Bound = Q3 + 1.5 × IQR
 
-Data yang berada di luar rentang ini dianggap outlier dan dilakukan **capping** agar tetap dalam batas wajar.
-
-🔍 Penjelasan Kodenya:
-
-- quantile(0.25) → Ambil nilai Q1 (25%)
-- quantile(0.75) → Ambil nilai Q3 (75%)
-- Hitung IQR → Selisih antara Q3 dan Q1
-- clip(lower, upper) → Fungsi ini otomatis:
-  - Nilai < lower → diganti dengan lower
-  - Nilai > upper → diganti dengan upper
-
-Kode ini ngecek apakah ada angka yang kelewat tinggi atau rendah banget di kolom tertentu, terus dipotong supaya tetap dalam range yang masuk akal. Supaya model nggak kaget lihat data aneh.
+Data yang berada di luar rentang ini dianggap outlier dan langsung dihilangkan
 
 ## 3. 🔠 Encoding Fitur Kategorikal
 
@@ -238,14 +227,10 @@ Fitur bertipe kategorikal dikonversi menjadi numerik menggunakan `LabelEncoder`:
 
       le = LabelEncoder()
       stroke_df['Gender encode'] = le.fit_transform(stroke_df['Gender'])
-      stroke_df['Work Type encode'] = le.fit_transform(stroke_df['Work Type'])
-      stroke_df['Residence Type encode'] = le.fit_transform(stroke_df['Residence Type'])
-      stroke_df['Smoking Status encode'] = le.fit_transform(stroke_df['Smoking Status'])
-      stroke_df['Alcohol Intake encode'] = le.fit_transform(stroke_df['Alcohol Intake'])
-      stroke_df['Physical Activity encode'] = le.fit_transform(stroke_df['Physical Activity'])
-      stroke_df['Family History of Stroke encode'] = le.fit_transform(stroke_df['Family History of Stroke'])
-      stroke_df['Dietary Habits encode'] = le.fit_transform(stroke_df['Dietary Habits'])
-      stroke_df['Diagnosis encode'] = le.fit_transform(stroke_df['Diagnosis'])
+
+Begituhpun, dan selanjutnnya:
+
+      ['Gender encode', 'Work Type encode', 'Residence Type encode', 'Smoking Status encode', 'Alcohol Intake encode', 'Physical Activity encode', 'Family History of Stroke encode', 'Dietary Habits encode', 'Diagnosis encode']
 
 Kolom hasil encoding diberi label encode di belakangnya untuk membedakan, dan kolom aslinya tidak dihapus agar tetap bisa digunakan untuk analisis eksploratif.
 
@@ -275,38 +260,20 @@ Di mana:
 
 Normalisasi ini penting khususnya untuk algoritma yang sensitif terhadap skala seperti KNN dan Boosting.
 
-## 5. 🔄 Data Splitting
-
-Dataset disusun ulang menjadi dua bagian:
-
-      all_features = gabungan fitur numerik + semua kolom encode
-
-      x = semua fitur pada all_features kecuali kolom Age
-
-      y = target label Diagnosis Stroke
-
-      x = stroke_df[all_features].drop('Age', axis=1)
-      y = stroke_df['Diagnosis Stroke']
-
-      X_train, X_test, y_train, y_test = train_test_split(
-      x, y, test_size=0.2, stratify=y, random_state=42)
-
-Pembagian 80:20 bertujuan untuk memastikan generalisasi model yang baik, dan stratify digunakan agar distribusi kelas tetap proporsional.
-
-### 🧠 Diagnosis Stroke Custom Labeling
+## 5. 🧠 variabel target custom (Diagnosis Stroke)
 
 Untuk meningkatkan pemahaman risiko, dibuat label klasifikasi baru bernama Diagnosis Stroke, berdasarkan skor dari fitur risiko:
 
 Penyesuaian Label Smoking Status
 
-#### Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
+### Ubah nilai encode menjadi: 0 = sering merokok, 1 = tidak merokok
 
       def encode_smoking(smoking_val):
       return 0 if smoking_val < 0.5 else 1
 
       stroke_df['Smoking Status encode'] = stroke_df['Smoking Status encode'].apply(encode_smoking)
 
-#### Hitung Threshold Berdasarkan Pasien Stroke
+### Hitung Threshold Berdasarkan Pasien Stroke
 
       diagnosis_positive = stroke_df[stroke_df['Diagnosis encode'] == 1]
 
@@ -322,7 +289,7 @@ Penyesuaian Label Smoking Status
 
 Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk klasifikasi risiko.
 
-#### Fungsi Klasifikasi Risiko
+### Fungsi Klasifikasi Risiko
 
       def classify_stroke(row):
       score = 0
@@ -341,7 +308,7 @@ Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk k
 
       stroke_df['Diagnosis Stroke'] = stroke_df.apply(classify_stroke, axis=1)
 
-#### Nilai klasifikasi
+### Nilai klasifikasi
 
 | Label | Keterangan               |
 | ----- | ------------------------ |
@@ -351,6 +318,24 @@ Rata-rata dari pasien yang sudah terkena stroke digunakan sebagai ambang untuk k
 | 3     | **Stroke parah**         |
 
 Fungsi ini menghitung skor risiko stroke dengan menjumlahkan faktor-faktor risiko utama yang nilainya sama atau lebih besar dari threshold rata-rata pasien stroke, yaitu usia, penyakit jantung, kadar glukosa rata-rata, riwayat keluarga stroke, dan level stres. Untuk status merokok, skor bertambah jika nilai encode-nya lebih kecil atau sama dengan threshold (karena angka lebih kecil berarti lebih sering merokok). Setelah skor dihitung, fungsi mengklasifikasikan risiko menjadi empat kelas: jika pasien sudah terdiagnosis stroke dan skornya 5 atau lebih, dikategorikan sebagai stroke parah (3), jika kurang dari itu sebagai stroke ringan/sedang (2). Jika pasien belum terdiagnosis, skor 4 atau lebih diklasifikasikan sebagai risiko tinggi (1), dan di bawah itu sebagai aman (0). Fungsi ini kemudian diaplikasikan ke setiap baris data menggunakan .apply() dengan axis=1 dan hasilnya disimpan di kolom baru Diagnosis Stroke.
+
+## 6. 🔄 Data Splitting
+
+Dataset disusun ulang menjadi dua bagian:
+
+      all_features = gabungan fitur numerik + semua kolom encode
+
+      x = semua fitur pada all_features kecuali kolom Age
+
+      y = target label Diagnosis Stroke
+
+      x = stroke_df[all_features].drop('Age', axis=1)
+      y = stroke_df['Diagnosis Stroke']
+
+      X_train, X_test, y_train, y_test = train_test_split(
+      x, y, test_size=0.2, stratify=y, random_state=42)
+
+Pembagian 80:20 bertujuan untuk memastikan generalisasi model yang baik, dan stratify digunakan agar distribusi kelas tetap proporsional.
 
 ---
 
@@ -363,11 +348,12 @@ Dalam proyek ini, digunakan tiga algoritma klasifikasi utama: K-Nearest Neighbor
 ### 1. K-Nearest Neighbors (KNN) 👥
 
       knn = KNeighborsClassifier(
-      n_neighbors=30,
-      weights='distance',
-      metric='minkowski',
-      p=1
+         n_neighbors=30,
+         weights='distance',
+         metric='minkowski',
+         p=1
       )
+
       knn.fit(X_train, y_train)
 
 Cara Kerja:
@@ -377,7 +363,7 @@ KNN adalah **algoritma berbasis instance yang mengklasifikasikan data baru berda
 Alasan Pemilihan:
 
 - KNN bersifat non-parametrik, efektif untuk mendeteksi pola lokal dalam data dengan distribusi kompleks dan tidak linear.
-- Pemilihan \**n_neighbors=30*8 bertujuan menyeimbangkan bias dan varians: cukup banyak tetangga untuk estimasi yang stabil tanpa overfitting.
+- Pemilihan \*_n_neighbors=30_ bertujuan menyeimbangkan bias dan varians: cukup banyak tetangga untuk estimasi yang stabil tanpa overfitting.
 - Pemberian bobot jarak (weights='distance') meningkatkan akurasi pada dataset dengan sebaran yang tidak homogen, memastikan tetangga yang sangat dekat berpengaruh dominan.
 - Penggunaan **metric='minkowski'** dengan **p=1** (Manhattan distance) lebih tahan terhadap outlier dibanding Euclidean, relevan untuk data yang berisi fitur numerik dengan rentang berbeda.
 
@@ -386,11 +372,14 @@ Alasan Pemilihan:
       from sklearn.ensemble import RandomForestClassifier
 
       rf = RandomForestClassifier(
-      n_estimators=100,
-      max_depth=10,
-      class_weight='balanced',
-      random_state=42
+         n_estimators=300,
+         max_depth=15,
+         min_samples_split=10,
+         min_samples_leaf=4,
+         random_state=123,
+         class_weight='balanced'
       )
+
       rf.fit(X_train, y_train)
 
 Cara Kerja:
@@ -400,28 +389,29 @@ Random Forest adalah **metode ensemble yang membangun banyak pohon keputusan (de
 Alasan Pemilihan:
 
 - Random Forest efektif menangani data dengan kombinasi fitur numerik dan kategorikal serta dapat menangkap interaksi kompleks antar fitur.
-- Parameter **n_estimators=100** memberikan jumlah pohon yang cukup untuk stabilitas prediksi tanpa memperberat komputasi secara berlebihan.
-- **max_depth=10** mengatur kedalaman maksimum setiap pohon agar tidak terlalu dalam, sehingga menghindari overfitting dan menjaga model tetap generalis.
-- Penggunaan class_weight='balanced' memberikan bobot lebih pada kelas minoritas (pasien stroke), membantu mengatasi masalah ketidakseimbangan kelas dalam dataset.
-- **random_state=42** digunakan untuk memastikan reproducibility hasil pelatihan model.
+- Parameter **n_estimators=300** memberikan jumlah pohon yang cukup untuk stabilitas prediksi tanpa memperberat komputasi secara berlebihan.
+- **max_depth=15** mengatur kedalaman maksimum setiap pohon agar tidak terlalu dalam, sehingga menghindari overfitting dan menjaga model tetap generalis.
+- Penggunaan **class_weight='balanced'** memberikan bobot lebih pada kelas minoritas (pasien stroke), membantu mengatasi masalah ketidakseimbangan kelas dalam dataset.
+- **random_state=123** digunakan untuk memastikan reproducibility hasil pelatihan model.
 
 ### 3. Gradient Boosting 🚀
 
       from sklearn.ensemble import GradientBoostingClassifier
 
       boost = GradientBoostingClassifier(
-      n_estimators=300,
-      learning_rate=0.05,
-      max_depth=5,
-      subsample=0.8,
-      random_state=42
+         n_estimators=300,
+         learning_rate=0.05,
+         max_depth=5,
+         subsample=0.8,
+         random_state=42
       )
+
       boost.fit(X_train, y_train)
 
 Cara Kerja:
 
-Gradient Boosting adalah **metode ensemble yang membangun model secara bertahap dengan menambahkan banyak pohon keputusan kecil (weak learners).** Setiap pohon baru berfokus pada memperbaiki kesalahan prediksi dari model sebelumnya dengan cara meminimalkan fungsi loss secara iteratif. Parameter learning_rate mengontrol seberapa besar kontribusi setiap pohon terhadap model akhir, sehingga memperlambat pembelajaran dan mengurangi risiko overfitting. Penggunaan subsample=0.8 berarti setiap pohon hanya dilatih pada 80% sampel data yang dipilih secara acak, menambah variasi model sekaligus berfungsi sebagai regularisasi.
-max_depth=5 membatasi kompleksitas tiap pohon agar tetap sederhana dan tidak overfit.
+Gradient Boosting adalah **metode ensemble yang membangun model secara bertahap dengan menambahkan banyak pohon keputusan kecil (weak learners).** Setiap pohon baru berfokus pada memperbaiki kesalahan prediksi dari model sebelumnya dengan cara meminimalkan fungsi loss secara iteratif. Parameter learning_rate mengontrol seberapa besar kontribusi setiap pohon terhadap model akhir, sehingga memperlambat pembelajaran dan mengurangi risiko overfitting. Penggunaan **subsample=0.8** berarti setiap pohon hanya dilatih pada 80% sampel data yang dipilih secara acak, menambah variasi model sekaligus berfungsi sebagai regularisasi.
+**max_depth=5** membatasi kompleksitas tiap pohon agar tetap sederhana dan tidak overfit.
 
 Alasan Pemilihan:
 
